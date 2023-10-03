@@ -32,21 +32,33 @@ public class Squares {
     //MODIFIES: this
     //EFFECTS: Sets this = the next generation of cells using the ruleset explained in the class level comment
     public void nextGen(){
-        //TODO nextGen()
+        int[][] next = new int[width][height];
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                if (grid[i][j] == 1) {
+                    if (this.kill(i, j)) {
+                        next[i][j] = 0;
+                    } else {
+                        next[i][j] = 1;
+                    }
+                } else {
+                    if (this.makeNew(i, j)) {
+                        next[i][j] = 1;
+                    } else {
+                        next[i][j] = 0;
+                    }
+                }
+            }
+        }
+
+        this.grid = next;
     }
 
     //REQUIRES: input cell is alive
-    //EFFECTS: Returns true if the input cell has less than 2 neighbours and needs to die.
-    public boolean isLonely(int x, int y) {
-        //TODO isLonely()
-        return true; //stub
-    }
-
-    //REQUIRES: input cell is alive
-    //EFFECTS: Returns true if the input cell has more than 3 neighbours and needs to die.
-    public boolean isOverpopulated(int x, int y) {
+    //EFFECTS: Returns true if the input cell has either > 3 or < 2 neighbours and needs to die.
+    public boolean kill(int x, int y) {
         int neighbours = this.aliveNeighbours(x, y);
-        return (neighbours > 3);
+        return ((neighbours > 3) || (neighbours < 2));
     }
 
     //REQUIRES: input cell is dead
@@ -66,6 +78,10 @@ public class Squares {
                 if ((x + i >= 0 && x + i < width) && (y + j >= 0 && y + j < height))
                     aliveNeighbours += grid[x + i][y + j];
             }
+        }
+
+        if (grid[x][y] == 1) {
+            aliveNeighbours -= 1;
         }
 
         return aliveNeighbours;
